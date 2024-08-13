@@ -1,5 +1,6 @@
 import {GoogleGenerativeAI} from '@google/generative-ai'
 import { prePrompt, testDay, testReason } from '../constants/constants.js';
+import StoryModel from '../models/StoryModel.js';
 // import { GEMINI_API_KEY } from '../constants/constants'
 
 const genAI = new GoogleGenerativeAI("AIzaSyDLHYtS6M8SbgbaGr52K6CPt1Vbm4xvffw")
@@ -18,17 +19,17 @@ export async function generateStory({inputData}){
     `
 
     const result = await model.generateContent(prompt);
-    const response = await result.response;
+    const response = result.response;
 
     const text = response.text();
-    // console.log(text)
     return text;
 }
 
 
-export async function getInvestigationResults({query}){
+export async function getInvestigationResults({query, email}){
     
-    const prompt = `${context()}
+    
+    const prompt = `${await context({email})}
     
     Ill be asking you a question below, of suspects and their doings ?
     If they are not related to the theft, give appropriate scenrios that they were doing according to my question.
@@ -68,7 +69,12 @@ export async function submitAnswer({answer}) {
     return text;
     
 }
-const context = () => {
+const context = async ({email}) => {
+
+    console.log(email)
+    const {input: testDay, answerReason: testReason} = await StoryModel.findOne({email});
+   
+
     return `We are in a game and here are the details i gave you :
 
     Details starting :

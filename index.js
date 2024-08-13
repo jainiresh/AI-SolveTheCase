@@ -1,4 +1,3 @@
-import 'dotenv/config'
 import express from 'express'
 import bodyParser from 'body-parser'
 import authRouter from './routes/authRouter.js'
