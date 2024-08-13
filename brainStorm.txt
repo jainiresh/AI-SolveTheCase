@@ -1,0 +1,73 @@
+ - email content to Image
+ - logisitic transportation email update
+
+
+(Niresh) - story start
+ - contacts api (aravind, ram, kishore, gautam, prakash)
+ 
+(Aravind) - part 2
+ - contacts api ()
+ 
+ 
+ - Per user grant ID
+ - what to display on the UI upon login ?
+
+
+
+	  aravindh <-- nylas --> niresh
+	  
+	  
+Load riddles, split into hints .
+
+User -> Login 
+- New user {email:"", name:"", storyId:null }
+
+- [Start a story] /new/story => { email:"", name:"", storyId:12, threadId:12 }
+
+- Email sent to the user, with the first hint.
+
+- Email thread, fetch the content and render the AI generated images on the UI.
+
+
+/story
+
+
+LEts play a game
+
+Ill share you details about my day,  like
+ - whom all i met ?
+ - what they do ?
+ - i occasionally also provide at which circumstance/instance i met them today.
+ - where i met thim ?
+ - when i met them ?
+etc.,.,
+
+Assume all of these is happening in my town.
+form a crime story, where a person gets murdered in our town, and make one of the people i met the murderer, dont tell me who.
+
+Form a clear reason, it can include details that was made up by you , or unrelated to the details i have mentioned, about why the murderer murdered the man.
+
+Give me hints , and i need to figure out who the murderer is and eventually end up guessing your story's guilty person.
+
+There must be only one answer, who is the murderer and one reason that he did it.
+You can yourself make situations to people, even if i have not mentioned it.
+
+if i guess incorrectly, tell me im wrong too.
+
+
+
+Morning i woke up, and my gardener was watering my plants .
+He was cheerful as everyday, singing while watering the plants.
+
+I got up and took up my laptop.
+My friend Antony called, but when i picked up he did not speak, and the call got disconnected in a few seconds.
+
+Then i worked up to noon, then my maiden came and collected all my clothes.
+She did not speak to me properly, and she told that it was a family problem so i did not ask deeper details from her.
+
+Then evening i went to the gym , my trainer ALI was there, also working out with his other friends Veronica, and Saru.
+
+I went to the medical shop, and bought some digestive tablets, as i had some stomach ache.
+The person in the reception was a bit sad, but was working seriously.
+
+Then i came home, and slept
