@@ -10,6 +10,10 @@ const ContactSchema = {
     email:{
         type:String,
         required:true
+    },
+    isInvited:{
+        type:Boolean,
+        required:true
     }
 }
 

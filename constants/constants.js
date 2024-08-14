@@ -1,6 +1,6 @@
 export const USER_AUTH_COLLECTION_NAME = process.env.USER_AUTH_COLLECTION_NAME || 'Users'
 export const STORY_COLLECTION_NAME = process.env.STORY_COLLECTION_NAME || 'Stories'
-export const  MONGO_URI = process.env.MONGO_URI
+export const  MONGO_URI = process.env.MONGO_URI 
 export const USER_DB_NAME = process.env.USER_DB_NAME 
 export const DATABASE_NAME = process.env.DATABASE_NAME || "StoryBot"
 export const CONTACTS_COLLECTION_NAME = process.env.CONTACTS_COLLECTION_NAME || "UserContacts"

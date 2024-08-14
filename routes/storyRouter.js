@@ -27,7 +27,9 @@ storyRouter.post('/create', async (req, res, next) => {
         });
         console.log("Response : " + response)
 
-        let storyDesc = response.trim().split("\n")[0];
+        let responseParts = response.trim().split("\n");
+        let storyDesc = responseParts[0];
+        let storyAnswer = responseParts[responseParts.length-1];
 
         const { cdnUrl } = await generateImageServiceUrl(storyDesc);
         
@@ -45,7 +47,7 @@ storyRouter.post('/create', async (req, res, next) => {
           const storyModel = new StoryModel({
             email,
             input: storyInput,
-            answerReason: response,
+            answerReason: storyAnswer,
             threadDetails: threadDetail,
             storyDescription: storyDesc,
             storyMainPicture: cdnUrl,
