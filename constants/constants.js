@@ -3,9 +3,17 @@ export const STORY_COLLECTION_NAME = process.env.STORY_COLLECTION_NAME || 'Stori
 export const  MONGO_URI = process.env.MONGO_URI
 export const USER_DB_NAME = process.env.USER_DB_NAME 
 export const DATABASE_NAME = process.env.DATABASE_NAME || "StoryBot"
+export const CONTACTS_COLLECTION_NAME = process.env.CONTACTS_COLLECTION_NAME || "UserContacts"
 
 //GEMINI SERVICE
 export const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyDLHYtS6M8SbgbaGr52K6CPt1Vbm4xvffw'
+export const CLOUDFLARE_API_KEY = process.env.CLOUDFLARE_API_KEY || "W3v6ffHWxczZO9f1gQvyeKwcZSJsFNH_8drcDzZA"
+export const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || "90fc83070e95f461645dd2ed67ef202d"
+export const CLOUDFLARE_IMAGE_MODEL = process.env.CLOUDFLARE_IMAGE_MODEL || "@cf/stabilityai/stable-diffusion-xl-base-1.0"
+
+
+//UPLOADCARE
+export const UPLOADCARE_PUBLIC_KEY = process.env.UPLOADCARE_PUBLIC_KEY || "9e3af627f3eab612be88";
 
 
 
@@ -22,11 +30,13 @@ Ill share you details about my day,  like
 etc.,.,
 
 Assume all of these is happening in my town.
-form a thriller story, where a rich person gets his money stolen in our town, and make one of the people i met the thief, dont tell me who.
+form a robbery story, where a rich person gets his money stolen in our town, and make one of the people i met the thief, dont tell me who.
 
 Form a clear reason, it can include details that was made up by you , or unrelated to the details i have mentioned, about why the thief stole the money, sky is your imagination.
 
-Give me who is the thief and the paragraph of reason of why he stole in detail
+Give me strictly 2 paragraphs.
+The first paragraph should contain the description of the story without exposing who the culprit is,
+ and the 2nd paragraph should tell me, who is the thief and the paragraph of reason of why he stole in detail.
 
 There must be only one answer, who is the thief and one reason that he did it.
 You can yourself make situations happening to people, even if i have not mentioned it.

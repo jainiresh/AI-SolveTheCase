@@ -2,14 +2,13 @@ import express from 'express'
 import { generateStory, getInvestigationResults, submitAnswer } from '../service/geminiService.js';
 import StoryModel from '../models/StoryModel.js';
 import config from '../config/nylasConfig.js';
-import Nylas from 'nylas';
+import { generateImageServiceUrl } from '../service/cloudflareService.js';
+import nylas, { sendEmailViaNylas } from '../service/nylasService.js';
+import ContactModel from '../models/ContactModel.js';
 const storyRouter = express.Router();
 
 
-const nylas = new Nylas({ 
-    apiKey: config.apiKey, 
-    apiUri: config.apiUri
-  })
+
 const nylasConfig = config;
 
 
@@ -17,36 +16,49 @@ storyRouter.post('/create', async (req, res, next) => {
     const {data:storyInput, email} = req.body;
 
     try {
+
+        const existsingRecord = await StoryModel.findOne({email});
+        if (existsingRecord) {
+            throw new Error("User already has a story assigned  !")
+        }
+
         const response = await generateStory({
             inputData: storyInput
         });
         console.log("Response : " + response)
 
-        const existsingRecord = await StoryModel.findOne({ email});
-        if (existsingRecord) {
-            throw new Error("User already has a story assigned  !")
-        }
+        let storyDesc = response.trim().split("\n")[0];
 
-        const sentMessageDetails = await nylas.messages.send({
-            identifier: nylasConfig.serverAccountGrantId,
-            requestBody: {
-              to: [{ name: "JOHN DOE", email }],
-              subject: "MYSTERY_STORY_BOT",
-              body: "Your story has successfully been created",
-            },
-          });
+        const { cdnUrl } = await generateImageServiceUrl(storyDesc);
+        
+        const sentMessageDetails = await sendEmailViaNylas({
+            name: "JOHN DOE",
+            email,
+            subject: "You have been assigned a case to solve !",
+            body: `<b> Your case has successfully been created ! Find the details below : </b> <br /><hr /><br /> <img src=${cdnUrl}' /> <hr /> <p><i>` + storyDesc+"</i></p>"
+        })
 
-          const threadId = sentMessageDetails.data.threadId;
-
+          const threadDetail = {
+            threadId: sentMessageDetails.data.threadId,
+            email: email
+          }
           const storyModel = new StoryModel({
             email,
             input: storyInput,
             answerReason: response,
-            capitalThreadId: threadId
+            threadDetails: threadDetail,
+            storyDescription: storyDesc,
+            storyMainPicture: cdnUrl,
+            
         })
 
-        await storyModel.save();
+          const contactModel = new ContactModel({
+            email,
+            contacts : []
+          })
 
+        storyModel.save();
+        contactModel.save()
 
           console.log("Debug nylas message " + JSON.stringify(sentMessageDetails))
        
@@ -71,22 +83,28 @@ storyRouter.post('/investigate', async (req, res, next) => {
             email
         })
 
+        console.log("Investigation response received " + JSON.stringify(response).substring(1,30));
+        const { cdnUrl } = await generateImageServiceUrl(response);
+
         const storyThread = await StoryModel.findOneAndUpdate({ email }, {
             $push: {
                 queries: query,
-                queryResponses: response
+                queryResponses: response,
+                investigationImages : cdnUrl
             }
         }, { new: true })
 
-        const sentMessageDetails = await nylas.messages.send({
-            identifier: nylasConfig.serverAccountGrantId,
-            requestBody: {
-              to: [{ name: "JOHN DOE", email }],
-              replyToMessageId: storyThread.capitalThreadId,
-              subject: "MYSTERY_STORY_BOT",
-              body: response,
-            },
-          });
+        let threadId = storyThread.threadDetails.filter(threadDetail => threadDetail.email === email);
+        threadId = threadId[0];
+
+        console.log("Thread id " + threadId)
+        await sendEmailViaNylas({
+            email,
+            subject:  "You have been assigned a case to solve !",
+            body: `<h2>Investigation query : </h2> <hr /> <h5>${query}</h5><hr /><img src='${cdnUrl}' /> <br><hr />\n <i>${response}</i> `,
+            threadId: threadId.threadId
+        })
+    
 
         
         res.json({ 'investigationResult': response })
@@ -109,5 +127,11 @@ storyRouter.post('/submit', async (req, res, next) => {
     }, { new: true })
     res.json({ 'result': response })
 })
+
+storyRouter.post('/genImage', async (req, res, next) => {
+    
+    res.send(await generateImageServiceUrl(req.body.data));
+})
+
 
 export default storyRouter;

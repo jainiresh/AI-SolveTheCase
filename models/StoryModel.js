@@ -2,9 +2,22 @@ import mongoose from 'mongoose';
 import { STORY_COLLECTION_NAME } from '../constants/constants.js';
 import {  mongooseConnect } from '../service/mongooseService.js';
 
+
+const ThreadSchemaDetails = {
+    threadId:{
+        type: String,
+        required: true,
+        unique: true
+    },
+    email:{
+        type: String,
+        required: true,
+        unique: true
+    }
+}
 const storySchemaDetails = {
     email:{
-        type:String,
+        type:[String],
         unique:true,
         required:true
     },
@@ -13,10 +26,22 @@ const storySchemaDetails = {
         unique: false,
         required: true
     },
+    storyDescription:{
+        type: String,
+        required: true
+    },
+    storyMainPicture:{
+        type: String,
+        required: true
+    },
     capitalThreadId:{
         type: String,
         unique: true,
         required: false
+    },
+    threadDetails:{
+        type: [ThreadSchemaDetails],
+        required: true
     },
     answerReason:{
         type: String,
@@ -28,6 +53,10 @@ const storySchemaDetails = {
         unique: false
     },
     queryResponses: {
+        type: [String],
+        required: false
+    },
+    investigationImages:{
         type: [String],
         required: false
     }
