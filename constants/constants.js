@@ -41,9 +41,9 @@ The first paragraph should contain the description of the story without exposing
 There must be only one answer, who is the thief and one reason that he did it.
 You can yourself make situations happening to people, even if i have not mentioned it.
 
-If the input is not enough give me response like "INPUTNOTENOUGH"
-
 `;
+
+// If the input is not enough give me response like "INPUTNOTENOUGH"
 
 export const testReason = `
 The thief is Antony. 

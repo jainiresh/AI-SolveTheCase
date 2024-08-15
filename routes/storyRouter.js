@@ -11,6 +11,8 @@ const storyRouter = express.Router();
 
 const nylasConfig = config;
 
+
+
 storyRouter.post('/exists', async (req, res, next) => {
     const {email} = req.body;
     const existsingRecord = await StoryModel.findOne({email});
@@ -24,8 +26,10 @@ storyRouter.post('/get', async (req, res, next) => {
 })
 
 storyRouter.post('/create', async (req, res, next) => {
-    const {data:storyInput, email} = req.body;
+    const {storyInput, email} = req.body;
 
+    console.log("Create router");
+    console.log("Story input : " + storyInput + " $ " + email)
     try {
 
         const existsingRecord = await StoryModel.findOne({email});
@@ -107,7 +111,6 @@ storyRouter.post('/investigate', async (req, res, next) => {
             query,
             email
         });
-        
 
         console.log("Investigation response received " + JSON.stringify(response).substring(1,30));
         const { cdnUrl } = await generateImageServiceUrl(response);
@@ -127,13 +130,13 @@ storyRouter.post('/investigate', async (req, res, next) => {
         await sendEmailViaNylas({
             email,
             subject:  "You have been assigned a case to solve !",
-            body: `<h2>Investigation query : </h2> <hr /> <h5>${query}</h5><hr /><img src='${cdnUrl}' /> <br><hr />\n <i>${response}</i> `,
+            body: `<h2>Investigation query : </h2> <hr/> <h5>${query}</h5><hr/><img src='${cdnUrl}' /> <br><hr/> \n <i>${response}</i> `,
             threadId: threadId.threadId
         })
     
 
-        
-        res.json({ 'investigationResult': response })
+
+        res.json({ 'investigationResult': response, imageUrl:cdnUrl })
     } catch (error) {
         res.json({ 'error': error.message })
     }

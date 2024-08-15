@@ -10,6 +10,7 @@ contactRouter.post('/list', async (req, res, next) => {
     const email = req.body.email;
 
     let resultSet = await ContactModel.find({email});
+    
     resultSet = resultSet[0].contacts;
 
     //If already contacts in DB, then return .
@@ -79,15 +80,18 @@ contactRouter.post('/list', async (req, res, next) => {
 contactRouter.post('/invite', async (req, res, next) => {
     try {
         
-    
-    let {id:contactID, currUserEmail} = req.body;
+    console.log('Start ' + JSON.stringify(req.body))
+    let {id:contactID, email:currUserEmail} = req.body;
+    console.log(currUserEmail)
+
 
     //Gets the email of the current user, and the contactID .
-    let contacts = await ContactModel.findOne({currUserEmail});
+    let contacts = await ContactModel.findOne({email:currUserEmail});
    
 
     //Fetches the contacts of the current User.
     contacts = contacts.contacts;
+    console.log("Contacts found " + JSON.stringify(contacts))
     
    
 
@@ -114,7 +118,7 @@ contactRouter.post('/invite', async (req, res, next) => {
     }
 
     // Get the existing story model for the current user.
-    let existingStoryPiece = await StoryModel.findOne({currUserEmail});
+    let existingStoryPiece = await StoryModel.findOne({email:currUserEmail});
 
     // Send a context email
     await sendContext({invitee});
@@ -133,7 +137,7 @@ contactRouter.post('/invite', async (req, res, next) => {
         })
     }
 
-    await ContactModel.findOneAndUpdate({currUserEmail, 'contacts._id':contactID },{$set: { 'contacts.$.isInvited': true }});
+    await ContactModel.findOneAndUpdate({email:currUserEmail, 'contacts._id':contactID },{$set: { 'contacts.$.isInvited': true }});
 
     
     res.json({data:`Invited ${invitee.email} to the case, and shared the details !`});
@@ -162,7 +166,7 @@ async function fireStart({invitee, existingStoryPiece, currUserEmail}){
     }
 
     // Store the thread details, in the story model along with the new email
-     await StoryModel.findOneAndUpdate({currUserEmail},{
+     await StoryModel.findOneAndUpdate({email:currUserEmail},{
         $push:{
             email: invitee.email,
             threadDetails:{
