@@ -1,7 +1,7 @@
 export const USER_AUTH_COLLECTION_NAME = process.env.USER_AUTH_COLLECTION_NAME || 'Users'
 export const STORY_COLLECTION_NAME = process.env.STORY_COLLECTION_NAME || 'Stories'
-export const  MONGO_URI = process.env.MONGO_URI
-export const USER_DB_NAME = process.env.USER_DB_NAME 
+export const  MONGO_URI = process.env.MONGO_URI || "mongodb+srv://nireshpandian19:MongoDb008%40@targetdomains.a7fqocp.mongodb.net/?retryWrites=true&w=majority&appName=TargetDomains"
+export const USER_DB_NAME = process.env.USER_DB_NAME || "nireshpandian19"
 export const DATABASE_NAME = process.env.DATABASE_NAME || "StoryBot"
 export const CONTACTS_COLLECTION_NAME = process.env.CONTACTS_COLLECTION_NAME || "UserContacts"
 
@@ -40,6 +40,8 @@ The first paragraph should contain the description of the story without exposing
 
 There must be only one answer, who is the thief and one reason that he did it.
 You can yourself make situations happening to people, even if i have not mentioned it.
+
+If the input is not enough give me response like "INPUTNOTENOUGH"
 
 `;
 

@@ -50,8 +50,8 @@ export async function getInvestigationResults({query, email}){
     return text;
 }
 
-export async function submitAnswer({answer}) {
-    const prompt = `${context()}
+export async function submitAnswer({answer, email}) {
+    const prompt = `${context({email})}
     
     Now im submitting my answer who is likely the thief, if iam right about who the thief is ? Congratulate me and explain why it's right.
     else
@@ -69,24 +69,23 @@ export async function submitAnswer({answer}) {
     return text;
     
 }
+
 const context = async ({email}) => {
 
-    console.log(email)
-    const {input: testDay, answerReason: testReason} = await StoryModel.findOne({email});
-   
+    const {input, answerReason} = await StoryModel.findOne({email});
 
     return `We are in a game and here are the details i gave you :
 
     Details starting :
-    ${prePrompt}
+    ${input}
     Details Ended
     
     This is the input of my day i gave you :
-    ${testDay}
+    ${input}
 "
     This is the story you created mentioning the thief and the reason in the following story statement:
     Story statement start:
-    ${testReason}
+    ${answerReason}
     Story statement end
     `
 }

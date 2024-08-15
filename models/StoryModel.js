@@ -18,7 +18,7 @@ const ThreadSchemaDetails = {
 const storySchemaDetails = {
     email:{
         type:[String],
-        unique:true,
+        unique:false,
         required:true
     },
     input:{
@@ -59,6 +59,11 @@ const storySchemaDetails = {
     investigationImages:{
         type: [String],
         required: false
+    },
+    isStoryOpen: {
+        type: Boolean,
+        required: false,
+        default: true
     }
 };
 

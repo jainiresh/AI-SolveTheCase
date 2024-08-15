@@ -11,6 +11,17 @@ const storyRouter = express.Router();
 
 const nylasConfig = config;
 
+storyRouter.post('/exists', async (req, res, next) => {
+    const {email} = req.body;
+    const existsingRecord = await StoryModel.findOne({email});
+    res.json({"response" : existsingRecord && existsingRecord.isStoryOpen})
+})
+
+storyRouter.post('/get', async (req, res, next) => {
+    const {email} = req.body;
+    const existsingRecord = await StoryModel.findOne({email});
+    res.json({"response" : existsingRecord})
+})
 
 storyRouter.post('/create', async (req, res, next) => {
     const {data:storyInput, email} = req.body;
@@ -18,7 +29,7 @@ storyRouter.post('/create', async (req, res, next) => {
     try {
 
         const existsingRecord = await StoryModel.findOne({email});
-        if (existsingRecord) {
+        if (existsingRecord && existsingRecord.isStoryOpen) {
             throw new Error("User already has a story assigned  !")
         }
 
@@ -31,10 +42,15 @@ storyRouter.post('/create', async (req, res, next) => {
         let storyDesc = responseParts[0];
         let storyAnswer = responseParts[responseParts.length-1];
 
+
+        if (storyDesc.toLowerCase().startsWith('INPUTNOTENOUGH')) {
+           return res.send({ "error": response });
+        }
+
         const { cdnUrl } = await generateImageServiceUrl(storyDesc);
         
         const sentMessageDetails = await sendEmailViaNylas({
-            name: "JOHN DOE",
+            name: "Mr Detective",
             email,
             subject: "You have been assigned a case to solve !",
             body: `<b> Your case has successfully been created ! Find the details below : </b> <br /><hr /><br /> <img src=${cdnUrl}' /> <hr /> <p><i>` + storyDesc+"</i></p>"
@@ -51,18 +67,24 @@ storyRouter.post('/create', async (req, res, next) => {
             threadDetails: threadDetail,
             storyDescription: storyDesc,
             storyMainPicture: cdnUrl,
+            capitalThreadId:  sentMessageDetails.data.threadId
             
         })
 
-          const contactModel = new ContactModel({
+        const contactModel = new ContactModel({
             email,
             contacts : []
-          })
+        })
 
-        storyModel.save();
-        contactModel.save()
+        await storyModel.save();
+        const existsingContactRecord = await StoryModel.findOne({email});
+        if(!existsingContactRecord){
+            await ContactModel.findOne()
+        }else{
+            await contactModel.save()
+        }
 
-          console.log("Debug nylas message " + JSON.stringify(sentMessageDetails))
+        console.log("Debug nylas message " + JSON.stringify(sentMessageDetails))
        
         res.json({ 'storyDetails': response });
 
@@ -77,13 +99,15 @@ storyRouter.post('/create', async (req, res, next) => {
 
 
 storyRouter.post('/investigate', async (req, res, next) => {
+    console.log(req)
     const { data: query, email } = req.body;
 
     try {
         const response = await getInvestigationResults({
             query,
             email
-        })
+        });
+        
 
         console.log("Investigation response received " + JSON.stringify(response).substring(1,30));
         const { cdnUrl } = await generateImageServiceUrl(response);
@@ -119,13 +143,15 @@ storyRouter.post('/investigate', async (req, res, next) => {
 storyRouter.post('/submit', async (req, res, next) => {
     const { data: answer, email } = req.body;
     const response = await submitAnswer({
-        answer
+        answer,
+        email
     });
     await StoryModel.findOneAndUpdate({ email }, {
         $push: {
             queries: answer,
-            queryResponses: response
-        }
+            queryResponses: response,
+        },
+        isStoryOpen: false
     }, { new: true })
     res.json({ 'result': response })
 })

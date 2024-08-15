@@ -13,10 +13,13 @@ router.get('/oauth/success', (req, res) => {
 })
 
 router.get('/nylas/hostedAuth', (req, res) => {  
+  if(req.query.id) {
+    res.redirect(`http://localhost:3001/story?id=${req.query.id}&email=${req.query.email}`)
+  }
   const authUrl = nylas.auth.urlForOAuth2({
     clientId: config.clientId,
     provider: 'google',
-    redirectUri: config.callbackUri
+    redirectUri: config.callbackUri,
   })
 
   res.redirect(authUrl)
@@ -27,7 +30,6 @@ router.get('/oauth/exchange', async (req, res) => {
   
     if (!code) {
       res.status(400).send('No authorization code returned from Nylas')
-  
       return
     }
   
@@ -37,15 +39,16 @@ router.get('/oauth/exchange', async (req, res) => {
             redirectUri: config.callbackUri,
             code
       })
-  
-      const { grantId } = response
-      localStorage.setItem("grantId", grantId);
+      console.log(response)
+      const { grantId, email } = response
+      //localStorage.setItem("grantId", grantId);
 
       console.log(`Grant id : ${grantId}`)
   
       res.status(200)
-      res.redirect(`http://localhost:3000/oauth/success`)
+      res.redirect(`http://localhost:3001/story?id=${grantId}&email=${email}`)
     } catch (error) {
+      console.log(error)
       res.status(500).send('Failed to exchange authorization code for token ' + JSON.stringify(error))
     }
   })  
