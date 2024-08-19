@@ -26,16 +26,24 @@ storyRouter.post('/get', async (req, res, next) => {
 })
 
 storyRouter.post('/create', async (req, res, next) => {
-    const {storyInput, email} = req.body;
+    const {data:storyInput, email} = req.body;
 
+    
     console.log("Create router");
     console.log("Story input : " + storyInput + " $ " + email)
     try {
 
-        const existsingRecord = await StoryModel.findOne({email});
+
+        if(!data || data == ''){
+            throw new Error("No input storyinput found !");
+        }
+        
+        const existsingRecord = await StoryModel.findOne({email, isStoryOpen: true});
         if (existsingRecord && existsingRecord.isStoryOpen) {
             throw new Error("User already has a story assigned  !")
         }
+        //TBC , deleting the old records
+        await StoryModel.findOneAndDelete({email, isStoryOpen:false});
 
         const response = await generateStory({
             inputData: storyInput
@@ -53,6 +61,33 @@ storyRouter.post('/create', async (req, res, next) => {
 
         const { cdnUrl } = await generateImageServiceUrl(storyDesc);
         
+        
+          const storyModel = new StoryModel({
+            email,
+            input: storyInput,
+            answerReason: storyAnswer,
+            storyDescription: storyDesc,
+            storyMainPicture: cdnUrl,
+            isStoryOpen: true
+            
+        })
+
+        const contactModel = new ContactModel({
+            email,
+            contacts : [],
+            locked:false
+        })
+
+        console.log("Trying to save story Model")
+        await storyModel.save();
+
+        console.log("Saved story Model")
+        const existsingContactRecord = await ContactModel.findOne({email});
+        if(!existsingContactRecord){
+            console.log("Existing contact record not found")
+            await contactModel.save()
+        }
+
         const sentMessageDetails = await sendEmailViaNylas({
             name: "Mr Detective",
             email,
@@ -64,29 +99,12 @@ storyRouter.post('/create', async (req, res, next) => {
             threadId: sentMessageDetails.data.threadId,
             email: email
           }
-          const storyModel = new StoryModel({
-            email,
-            input: storyInput,
-            answerReason: storyAnswer,
-            threadDetails: threadDetail,
-            storyDescription: storyDesc,
-            storyMainPicture: cdnUrl,
-            capitalThreadId:  sentMessageDetails.data.threadId
-            
-        })
 
-        const contactModel = new ContactModel({
-            email,
-            contacts : []
-        })
+        await StoryModel.findOneAndUpdate({email, isStoryOpen:true}, {$set: {
+            threadDetails: [threadDetail],
+            capitalThreadId: sentMessageDetails.data.threadId
+          }})        
 
-        await storyModel.save();
-        const existsingContactRecord = await StoryModel.findOne({email});
-        if(!existsingContactRecord){
-            await ContactModel.findOne()
-        }else{
-            await contactModel.save()
-        }
 
         console.log("Debug nylas message " + JSON.stringify(sentMessageDetails))
        

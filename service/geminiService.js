@@ -34,13 +34,15 @@ export async function getInvestigationResults({query, email}){
     Ill be asking you a question below, of suspects and their doings ?
     If they are not related to the theft, give appropriate scenrios that they were doing according to my question.
 
-    IF im asking about the thief, make sure you dont explicity agree on it, but make me feel like im a bit closer to the answer.
+    If i mention the thief name, or the person's reference and ask about the thief, give me hints related to the final answer, linking to this preson, that would make me think a bit closer that he might be the thief.
+    If im not asking about the thief, gthen make up situations of people accordingly to the context.
     Know that you are someone who just gives made up situations of people, accordingly to the context.
     Dont suggest anything about the answers.
     
-    Be careful not to expose the answer who the thief is.
-    
-    ${query}`
+    Be careful not to expose the name of the culprit is.
+    Below is my investigation query ,
+
+    ${query}, is he/she the culprit ?`
 
     const result = await model.generateContent(prompt);
     const response = result.response;
@@ -51,16 +53,21 @@ export async function getInvestigationResults({query, email}){
 }
 
 export async function submitAnswer({answer, email}) {
-    const prompt = `${context({email})}
+
+    // console.log("Pre prompt : " + context(email) + "$$")
+    const prompt = `${await context({email})}
     
-    Now im submitting my answer who is likely the thief, if iam right about who the thief is ? Congratulate me and explain why it's right.
+    Now im submitting my answer who is likely the thief, compare it with the right answer mentioned above, if iam right about who the thief is ? Congratulate me and explain why it's right.
     else
     If im wrong, tell me im wrong and give me the right answer, and explain it .
     Give me just the result, and explanation should be good.
 
     My guess to be checked is :
     
-    ${answer}    `;
+    ${answer}  
+    
+    
+    Compare the above against the right answer`;
 
     const result = await model.generateContent(prompt);
     const response = result.response;
@@ -72,20 +79,21 @@ export async function submitAnswer({answer, email}) {
 
 const context = async ({email}) => {
 
-    const {input, answerReason} = await StoryModel.findOne({email});
+    const {input, answerReason, storyDescription} = await StoryModel.findOne({email});
 
-    return `We are in a game and here are the details i gave you :
+    console.log("Story desc " +storyDescription)
+    return `We are in a game and here are the details i gave you, with which you created a story :
 
-    Details starting :
-    ${input}
-    Details Ended
     
     This is the input of my day i gave you :
     ${input}
 "
     This is the story you created mentioning the thief and the reason in the following story statement:
     Story statement start:
-    ${answerReason}
+    ${storyDescription}
     Story statement end
+
+    This is the final answer  and reason of the story's about who is the culprit ? :
+    ${answerReason}
     `
 }

@@ -6,11 +6,16 @@ import mongoose from 'mongoose';
 import StoryModel from '../models/StoryModel.js';
 
 contactRouter.post('/list', async (req, res, next) => {
+    
     const grantID = req.body.grantID;
     const email = req.body.email;
-
-    let resultSet = await ContactModel.find({email});
     
+    try{
+    let resultSet = await ContactModel.find({email, locked:false});
+    console.log("Contacts ! "+ resultSet )
+
+    await ContactModel.findOneAndUpdate({email,locked:{$ne: true}},{$set:{locked:true}})
+
     resultSet = resultSet[0].contacts;
 
     //If already contacts in DB, then return .
@@ -62,6 +67,9 @@ contactRouter.post('/list', async (req, res, next) => {
                     contacts :{
                         $each: contacts
                     }               
+                },
+                $set: {
+                    locked: false
                 }
             }
         )
@@ -75,6 +83,13 @@ contactRouter.post('/list', async (req, res, next) => {
     let temp = await ContactModel.findOne({email});
     
     res.json({"data":temp.contacts})
+}
+catch(e){
+    await ContactModel.findOneAndUpdate({email},{$set:{
+        locked:false
+    }})
+    console.log(e);
+}
 })
 
 contactRouter.post('/invite', async (req, res, next) => {

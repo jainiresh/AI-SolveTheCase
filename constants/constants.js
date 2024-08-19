@@ -29,8 +29,10 @@ Ill share you details about my day,  like
  - when i met them ?
 etc.,.,
 
+Remember you are telling this story to kids, so dont use harsh words.
+
 Assume all of these is happening in my town.
-form a robbery story, where a rich person gets his money stolen in our town, and make one of the people i met the thief, dont tell me who.
+form a decent robbery story without any harsh words, where a rich person or some valuable thing got stolen in our town, and make one of the people i met the thief, dont tell me who.
 
 Form a clear reason, it can include details that was made up by you , or unrelated to the details i have mentioned, about why the thief stole the money, sky is your imagination.
 

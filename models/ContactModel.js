@@ -26,6 +26,10 @@ const UserContactsSchema = {
     contacts: {
         type: [ContactSchema],
         required: true
+    },
+    locked:{
+        type: Boolean,
+        required: true
     }
 };
 
