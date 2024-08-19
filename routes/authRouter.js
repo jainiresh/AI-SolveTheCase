@@ -2,6 +2,7 @@ import express from 'express';
 const router = express.Router();
 import config from '../config/nylasConfig.js';
 import Nylas from 'nylas'
+import { frontEndUrl } from '../constants/constants.js';
 
 const nylas = new Nylas({ 
     apiKey: config.apiKey, 
@@ -14,7 +15,7 @@ router.get('/oauth/success', (req, res) => {
 
 router.get('/nylas/hostedAuth', (req, res) => {  
   if(req.query.id) {
-    res.redirect(`http://localhost:3001/story?id=${req.query.id}&email=${req.query.email}`)
+    res.redirect(`${frontEndUrl}/story?id=${req.query.id}&email=${req.query.email}`)
   }
   const authUrl = nylas.auth.urlForOAuth2({
     clientId: config.clientId,
@@ -46,7 +47,7 @@ router.get('/oauth/exchange', async (req, res) => {
       console.log(`Grant id : ${grantId}`)
   
       res.status(200)
-      res.redirect(`http://localhost:3001/story?id=${grantId}&email=${email}`)
+      res.redirect(`${frontEndUrl}/story?id=${grantId}&email=${email}`)
     } catch (error) {
       console.log(error)
       res.status(500).send('Failed to exchange authorization code for token ' + JSON.stringify(error))

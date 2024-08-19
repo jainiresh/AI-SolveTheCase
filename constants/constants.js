@@ -1,6 +1,6 @@
 export const USER_AUTH_COLLECTION_NAME = process.env.USER_AUTH_COLLECTION_NAME || 'Users'
 export const STORY_COLLECTION_NAME = process.env.STORY_COLLECTION_NAME || 'Stories'
-export const  MONGO_URI = process.env.MONGO_URI 
+export const  MONGO_URI = process.env.MONGO_URI  ||  "mongodb+srv://nireshpandian19:MongoDb008%40@targetdomains.a7fqocp.mongodb.net/?retryWrites=true&w=majority&appName=TargetDomains"
 export const USER_DB_NAME = process.env.USER_DB_NAME || "nireshpandian19"
 export const DATABASE_NAME = process.env.DATABASE_NAME || "StoryBot"
 export const CONTACTS_COLLECTION_NAME = process.env.CONTACTS_COLLECTION_NAME || "UserContacts"
@@ -54,3 +54,4 @@ Antony, your friend, was in dire straits. He'd been struggling financially for m
 export const testDay = `Morning i woke up, and my gardener was watering my plants .\nHe was cheerful as everyday, singing while watering the plants.\n\nI got up and took up my laptop.\nMy friend Antony called, but when i picked up he did not speak, and the call got disconnected in a few seconds.\n\nThen i worked up to noon, then my maiden came and collected all my clothes.\nShe did not speak to me properly, and she told that it was a family problem so i did not ask deeper details from her.\n\nThen evening i went to the gym , my trainer ALI was there, also working out with his other friends Veronica, and Saru.\n\nI went to the medical shop, and bought some digestive tablets, as i had some stomach ache.\nThe person in the reception was a bit sad, but was working seriously.\n\nThen i came home, and slept`;
 
 export const pingUrl = `https://ai-solvethecase.onrender.com`
+export const frontEndUrl = 'https://ai-solvethecase-client.onrender.com'
