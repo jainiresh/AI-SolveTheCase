@@ -1,4 +1,4 @@
-import { pingUrl } from "../constants/constants";
+import { pingUrl } from "../constants/constants.js";
 
 const config = {
     clientId: process.env.NYLAS_CLIENT_ID || '491ed749-0032-48f1-bac4-a2f09001cbca',
