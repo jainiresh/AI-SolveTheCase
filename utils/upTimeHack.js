@@ -9,4 +9,5 @@ const pingUrl = async() => {
         console.error("Errored in pinging the url" , pingUrl);
     }
 }
-module.exports = {pingUrl}
+
+export default pingUrl

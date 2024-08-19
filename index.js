@@ -4,7 +4,7 @@ import authRouter from './routes/authRouter.js'
 import storyRouter from './routes/storyRouter.js'
 import contactRouter from './routes/contactRouter.js'
 import cors from 'cors';
-import { pingUrl } from './constants/constants.js'
+import pingUrl from './utils/upTimeHack.js'
 
 const app = express()
 app.use(cors())
