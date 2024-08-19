@@ -34,7 +34,7 @@ storyRouter.post('/create', async (req, res, next) => {
     try {
 
 
-        if(!data || data == ''){
+        if(!storyInput || storyInput == ''){
             throw new Error("No input storyinput found !");
         }
         
@@ -44,6 +44,7 @@ storyRouter.post('/create', async (req, res, next) => {
         }
         //TBC , deleting the old records
         await StoryModel.findOneAndDelete({email, isStoryOpen:false});
+        await ContactModel.findOneAndDelete({email});
 
         const response = await generateStory({
             inputData: storyInput
