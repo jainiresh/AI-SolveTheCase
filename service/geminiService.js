@@ -42,9 +42,9 @@ export async function getInvestigationResults({query, email}){
     ${query}, is he/she the culprit ?
 
     In my investigation
-    If, SUSPECT and CULPRIT's name/roles are different or NOT SAME,  Then, give appropriate scenrios that they were doing according to my question, and make sure your response starts with the word "NOTSUS", and store this scenarios, in RESPONSE.
+    If, SUSPECT and CULPRIT's name/roles are different or NOT SAME,  Then, give appropriate scenrios that they were doing according to my question, and make sure your response starts with the word "NOT_SUS", and store this scenarios, in RESPONSE.
     else 
-    If SUSPECT and CULPRIT's name/roles are SAME then make up situations that connect my investigation to the crime, and tell me he looks a lot suspicious, and make sure your response starts with the word "SUS" and store these scenarios, in RESPONSE
+    If SUSPECT and CULPRIT's name/roles are SAME then make up situations that connect my investigation to the crime, and tell me he looks a lot suspicious, and make sure your response starts with the word "SUS$" and store these scenarios, in RESPONSE
 
     Know that you are someone who just gives made up situations of people, accordingly to the context.
     Dont use words like "maybe", "might be", or it's synonyms, tell me strongly that this is what happened.
@@ -59,12 +59,12 @@ export async function getInvestigationResults({query, email}){
 
     let text = response.text();
 
-    const nonSusIndex = text.indexOf("NOTSUS");
-    const susIndex = text.indexOf("SUS");
+    const nonSusIndex = text.indexOf("NOT_SUS");
+    const susIndex = text.indexOf("SUS$");
 
     console.log(nonSusIndex + " $ " + susIndex)
     
-    text = nonSusIndex != -1 ? text.substring(nonSusIndex) : susIndex != -1 ? text.substring(susIndex) : "Error investigating, can you please retry your investigation ?";
+    text = nonSusIndex != -1 ? text.substring(nonSusIndex+7) : susIndex != -1 ? text.substring(susIndex+4) : "Error investigating, can you please retry your investigation ?";
     return {imageResponse:response, text};
 }
 
