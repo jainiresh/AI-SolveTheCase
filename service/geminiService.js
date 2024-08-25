@@ -61,6 +61,8 @@ export async function getInvestigationResults({query, email}){
 
     const nonSusIndex = text.indexOf("NOTSUS");
     const susIndex = text.indexOf("SUS");
+
+    console.log(nonSusIndex + " $ " + susIndex)
     
     text = nonSusIndex != -1 ? text.substring(nonSusIndex) : susIndex != -1 ? text.substring(susIndex) : "Error investigating, can you please retry your investigation ?";
     return {imageResponse:response, text};
