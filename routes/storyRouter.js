@@ -126,18 +126,19 @@ storyRouter.post('/investigate', async (req, res, next) => {
     const { data: query, email } = req.body;
 
     try {
-        const response = await getInvestigationResults({
+        const {text} = await getInvestigationResults({
             query,
             email
         });
 
-        console.log("Investigation response received " + JSON.stringify(response).substring(1,30));
-        const { cdnUrl } = await generateImageServiceUrl(response);
+        console.log("Text is " + text)
+
+        const { cdnUrl } = await generateImageServiceUrl(text);
 
         const storyThread = await StoryModel.findOneAndUpdate({ email }, {
             $push: {
                 queries: query,
-                queryResponses: response,
+                queryResponses: text,
                 investigationImages : cdnUrl
             }
         }, { new: true })
@@ -149,13 +150,13 @@ storyRouter.post('/investigate', async (req, res, next) => {
         await sendEmailViaNylas({
             email,
             subject:  "You have been assigned a case to solve !",
-            body: `<h2>Investigation query : </h2> <hr/> <h5>${query}</h5><hr/><img src='${cdnUrl}' /> <br><hr/> \n <i>${response}</i> `,
+            body: `<h2>Investigation query : </h2> <hr/> <h5>${query}</h5><hr/><img src='${cdnUrl}' /> <br><hr/> \n <i>${text}</i> `,
             threadId: threadId.threadId
         })
     
 
 
-        res.json({ 'investigationResult': response, imageUrl:cdnUrl })
+        res.json({ 'investigationResult': text, imageUrl:cdnUrl })
     } catch (error) {
         res.json({ 'error': error.message })
     }

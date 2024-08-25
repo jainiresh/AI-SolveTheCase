@@ -29,27 +29,41 @@ export async function generateStory({inputData}){
 export async function getInvestigationResults({query, email}){
     
     
-    const prompt = `${await context({email})}
-    
-    Ill be asking you a question below, of suspects and their doings ?
-    If they are not related to the theft, give appropriate scenrios that they were doing according to my question.
+    const {prePrompt, answerReason} = await investigationContext({email});
 
-    If i mention the thief name, or the person's reference and ask about the thief, give me hints related to the final answer, linking to this preson, that would make me think a bit closer that he might be the thief.
-    If im not asking about the thief, gthen make up situations of people accordingly to the context.
+    
+    const prompt = `${prePrompt}
+
+    Get the actual culprit name/role from the below short text, and the reason behind their actions and let it be called as CULPRIT, and CULPRIT_REASON : 
+    ${answerReason}
+
+    Get the suspect name/role from the below short text, and their investigation query , and let it be called as SUSPECT, SUSPECT_INVESTIGATION respectively
+    Investigation : 
+    ${query}, is he/she the culprit ?
+
+    In my investigation
+    If, SUSPECT and CULPRIT's name/roles are different or NOT SAME,  Then, give appropriate scenrios that they were doing according to my question, and make sure your response starts with the word "NOTSUS", and store this scenarios, in RESPONSE.
+    else 
+    If SUSPECT and CULPRIT's name/roles are SAME then make up situations that connect my investigation to the crime, and tell me he looks a lot suspicious, and make sure your response starts with the word "SUS" and store these scenarios, in RESPONSE
+
     Know that you are someone who just gives made up situations of people, accordingly to the context.
-    Dont suggest anything about the answers.
+    Dont use words like "maybe", "might be", or it's synonyms, tell me strongly that this is what happened.
     
-    Be careful not to expose the name of the culprit is.
-    Below is my investigation query ,
+    Be careful not to expose the name of the actual culprit in your response.
+`
 
-    ${query}, is he/she the culprit ?`
+    console.log("Pre prompt is : " + prompt)
 
     const result = await model.generateContent(prompt);
     const response = result.response;
 
-    const text = response.text();
-    // console.log(text)
-    return text;
+    let text = response.text();
+
+    const nonSusIndex = text.indexOf("NOTSUS");
+    const susIndex = text.indexOf("SUS");
+    
+    text = nonSusIndex != -1 ? text.substring(nonSusIndex) : susIndex != -1 ? text.substring(susIndex) : "Error investigating, can you please retry your investigation ?";
+    return {imageResponse:response, text};
 }
 
 export async function submitAnswer({answer, email}) {
@@ -96,4 +110,13 @@ const context = async ({email}) => {
     This is the final answer  and reason of the story's about who is the culprit ? :
     ${answerReason}
     `
+}
+
+const investigationContext = async ({email}) => {
+    const {input, answerReason, storyDescription} = await StoryModel.findOne({email});
+
+    return {prePrompt:`I am a detective, and you are a story teller who makes up situations, and who responds to questinos asked to you about people. the story context is 
+    ${input}, while this happened, the story plot happened is : ${storyDescription}"
+    
+    `, answerReason}
 }
