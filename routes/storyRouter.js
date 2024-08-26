@@ -205,12 +205,22 @@ storyRouter.post('/investigate', async (req, res, next) => {
     threadId = threadId[0];
 
     console.log('Thread id ' + threadId);
-    await sendEmailViaNylas({
-      email,
-      subject: 'You have been assigned a case to solve !',
-      body: `<h2>Investigation query : </h2> <hr/> <h5>${query}</h5><hr/><img src='${cdnUrl}' /> <br><hr/> \n <i>${text}</i> `,
-      threadId: threadId.threadId,
-    });
+
+    let StoryPiece = await StoryModel.findOne({ email });
+    let linkedEmails = StoryPiece.email;
+
+    for (let emailIndividual of linkedEmails) {
+      let storyOne = await StoryModel.findOne({ email: emailIndividual });
+      let threadIndividual = storyOne.threadDetails.filter(
+        (threadDetail) => threadDetail.email == emailIndividual
+      );
+      sendEmailViaNylas({
+        email: emailIndividual,
+        subject: 'You have been assigned a case to solve !',
+        body: `<h2>Investigation query : </h2> <hr/> <h5>${query}</h5><hr/><img src='${cdnUrl}' /> <br><hr/> \n <i>${text}</i> `,
+        threadId: threadIndividual[0].threadId,
+      });
+    }
 
     res.json({ investigationResult: text, imageUrl: cdnUrl });
   } catch (error) {
