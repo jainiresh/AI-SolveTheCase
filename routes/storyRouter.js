@@ -1,5 +1,5 @@
 import express from 'express'
-import { generateStory, getInvestigationResults, submitAnswer } from '../service/geminiService.js';
+import { generateNickNames, generateNickNamesWithReference, generateStory, getInvestigationResults, submitAnswer } from '../service/geminiService.js';
 import StoryModel from '../models/StoryModel.js';
 import config from '../config/nylasConfig.js';
 import { generateImageServiceUrl } from '../service/cloudflareService.js';
@@ -26,7 +26,7 @@ storyRouter.post('/get', async (req, res, next) => {
 })
 
 storyRouter.post('/create', async (req, res, next) => {
-    const {data:storyInput, email} = req.body;
+    let {data:storyInput, email} = req.body;
 
     
     console.log("Create router");
@@ -54,6 +54,9 @@ storyRouter.post('/create', async (req, res, next) => {
         let responseParts = response.trim().split("\n");
         let storyDesc = responseParts[0];
         let storyAnswer = responseParts[responseParts.length-1];
+
+        storyInput = await generateNickNames(storyInput);
+        storyAnswer = await generateNickNamesWithReference(storyInput, storyAnswer);
 
 
         if (storyDesc.toLowerCase().startsWith('INPUTNOTENOUGH')) {

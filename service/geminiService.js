@@ -9,6 +9,40 @@ const model = genAI.getGenerativeModel({
     model: 'gemini-1.5-flash'
 })
 
+export async function generateNickNames(inputData){
+    let prePrompt = `Let me give you a paragraph below, output it in the same way but additionally adding names to the characters/roles, that dont have a name in it.
+    
+    
+    
+    ${inputData}`
+
+
+    const result = await model.generateContent(prePrompt);
+    const response = result.response;
+
+    return response.text();
+    console.log("Generated nick names text " + response.text )
+}
+
+export async function generateNickNamesWithReference(referenceData, inputData){
+    let prePrompt = `Let me give you a paragraph at the end enclosed in $, output it in the same way but additionally adding names to the characters/roles, referring to the below paragraph.
+    
+    Reference : 
+    ${referenceData}
+
+    To be output : 
+    $    
+    ${inputData}
+    $`
+
+
+    const result = await model.generateContent(prePrompt);
+    const response = result.response;
+
+    return response.text();
+    console.log("Generated nick names text " + response.text )
+}
+
 export async function generateStory({inputData}){
 
     const prompt = `${prePrompt}  
@@ -64,7 +98,9 @@ export async function getInvestigationResults({query, email}){
 
     console.log(nonSusIndex + " $ " + susIndex)
     
+    console.log("Text full : " + text)
     text = nonSusIndex != -1 ? text.substring(nonSusIndex+7) : susIndex != -1 ? text.substring(susIndex+4) : "Error investigating, can you please retry your investigation ?";
+    console.log("Text partial : " + text)
     return {imageResponse:response, text};
 }
 
@@ -83,7 +119,8 @@ export async function submitAnswer({answer, email}) {
     ${answer}  
     
     
-    Compare the above against the right answer`;
+    Compare the above against the right answer, and give me the result if im right or wrong in the first line.
+    And the sentence "If you would have investigated further, you could have found that", in the following line and match the reason with it.`;
 
     const result = await model.generateContent(prompt);
     const response = result.response;
