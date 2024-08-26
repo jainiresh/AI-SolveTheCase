@@ -1,31 +1,30 @@
-import {GoogleGenerativeAI} from '@google/generative-ai'
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { prePrompt, testDay, testReason } from '../constants/constants.js';
 import StoryModel from '../models/StoryModel.js';
 // import { GEMINI_API_KEY } from '../constants/constants'
 
-const genAI = new GoogleGenerativeAI("AIzaSyDLHYtS6M8SbgbaGr52K6CPt1Vbm4xvffw")
+const genAI = new GoogleGenerativeAI('AIzaSyDLHYtS6M8SbgbaGr52K6CPt1Vbm4xvffw');
 
 const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash'
-})
+  model: 'gemini-1.5-flash',
+});
 
-export async function generateNickNames(inputData){
-    let prePrompt = `Let me give you a paragraph below, output it in the same way but additionally adding names to the characters/roles, that dont have a name in it.
+export async function generateNickNames(inputData) {
+  let prePrompt = `Let me give you a paragraph below, output it in the same way but additionally adding names to the characters/roles, that dont have a name in it.
     
     
     
-    ${inputData}`
+    ${inputData}`;
 
+  const result = await model.generateContent(prePrompt);
+  const response = result.response;
 
-    const result = await model.generateContent(prePrompt);
-    const response = result.response;
-
-    return response.text();
-    console.log("Generated nick names text " + response.text )
+  return response.text();
+  console.log('Generated nick names text ' + response.text);
 }
 
-export async function generateNickNamesWithReference(referenceData, inputData){
-    let prePrompt = `Let me give you a paragraph at the end enclosed in $, output it in the same way but additionally adding names to the characters/roles, referring to the below paragraph.
+export async function generateNickNamesWithReference(referenceData, inputData) {
+  let prePrompt = `Let me give you a paragraph at the end enclosed in $, output it in the same way but additionally adding names to the characters/roles, referring to the below paragraph.
     
     Reference : 
     ${referenceData}
@@ -33,40 +32,34 @@ export async function generateNickNamesWithReference(referenceData, inputData){
     To be output : 
     $    
     ${inputData}
-    $`
+    $`;
 
+  const result = await model.generateContent(prePrompt);
+  const response = result.response;
 
-    const result = await model.generateContent(prePrompt);
-    const response = result.response;
-
-    return response.text();
-    console.log("Generated nick names text " + response.text )
+  return response.text();
+  console.log('Generated nick names text ' + response.text);
 }
 
-export async function generateStory({inputData}){
-
-    const prompt = `${prePrompt}  
+export async function generateStory({ inputData }) {
+  const prompt = `${prePrompt}  
     
     The details of my day goes like this :
 
     ${inputData}
-    `
+    `;
 
-    const result = await model.generateContent(prompt);
-    const response = result.response;
+  const result = await model.generateContent(prompt);
+  const response = result.response;
 
-    const text = response.text();
-    return text;
+  const text = response.text();
+  return text;
 }
 
+export async function getInvestigationResults({ query, email }) {
+  const { prePrompt, answerReason } = await investigationContext({ email });
 
-export async function getInvestigationResults({query, email}){
-    
-    
-    const {prePrompt, answerReason} = await investigationContext({email});
-
-    
-    const prompt = `${prePrompt}
+  const prompt = `${prePrompt}
 
     Get the actual culprit name/role from the below short text, and the reason behind their actions and let it be called as CULPRIT, and CULPRIT_REASON : 
     ${answerReason}
@@ -84,30 +77,34 @@ export async function getInvestigationResults({query, email}){
     Dont use words like "maybe", "might be", or it's synonyms, tell me strongly that this is what happened.
     
     Be careful not to expose the name of the actual culprit in your response.
-`
+`;
 
-    console.log("Pre prompt is : " + prompt)
+  console.log('Pre prompt is : ' + prompt);
 
-    const result = await model.generateContent(prompt);
-    const response = result.response;
+  const result = await model.generateContent(prompt);
+  const response = result.response;
 
-    let text = response.text();
+  let text = response.text();
 
-    const nonSusIndex = text.indexOf("NOT_SUS");
-    const susIndex = text.indexOf("SUS$");
+  const nonSusIndex = text.lastIndexOf('NOT_SUS');
+  const susIndex = text.lastIndexOf('SUS$');
 
-    console.log(nonSusIndex + " $ " + susIndex)
-    
-    console.log("Text full : " + text)
-    text = nonSusIndex != -1 ? text.substring(nonSusIndex+7) : susIndex != -1 ? text.substring(susIndex+4) : "Error investigating, can you please retry your investigation ?";
-    console.log("Text partial : " + text)
-    return {imageResponse:response, text};
+  console.log(nonSusIndex + ' $ ' + susIndex);
+
+  console.log('Text full : ' + text);
+  text =
+    nonSusIndex != -1
+      ? text.substring(nonSusIndex + 7)
+      : susIndex != -1
+      ? text.substring(susIndex + 4)
+      : 'Error investigating, can you please retry your investigation ?';
+  console.log('Text partial : ' + text);
+  return { imageResponse: response, text };
 }
 
-export async function submitAnswer({answer, email}) {
-
-    // console.log("Pre prompt : " + context(email) + "$$")
-    const prompt = `${await context({email})}
+export async function submitAnswer({ answer, email }) {
+  // console.log("Pre prompt : " + context(email) + "$$")
+  const prompt = `${await context({ email })}
     
     Now im submitting my answer who is likely the thief, compare it with the right answer mentioned above, if iam right about who the thief is ? Congratulate me and explain why it's right.
     else
@@ -122,20 +119,20 @@ export async function submitAnswer({answer, email}) {
     Compare the above against the right answer, and give me the result if im right or wrong in the first line.
     And the sentence "If you would have investigated further, you could have found that", in the following line and match the reason with it.`;
 
-    const result = await model.generateContent(prompt);
-    const response = result.response;
+  const result = await model.generateContent(prompt);
+  const response = result.response;
 
-    const text = response.text();
-    return text;
-    
+  const text = response.text();
+  return text;
 }
 
-const context = async ({email}) => {
+const context = async ({ email }) => {
+  const { input, answerReason, storyDescription } = await StoryModel.findOne({
+    email,
+  });
 
-    const {input, answerReason, storyDescription} = await StoryModel.findOne({email});
-
-    console.log("Story desc " +storyDescription)
-    return `We are in a game and here are the details i gave you, with which you created a story :
+  console.log('Story desc ' + storyDescription);
+  return `We are in a game and here are the details i gave you, with which you created a story :
 
     
     This is the input of my day i gave you :
@@ -148,14 +145,19 @@ const context = async ({email}) => {
 
     This is the final answer  and reason of the story's about who is the culprit ? :
     ${answerReason}
-    `
-}
+    `;
+};
 
-const investigationContext = async ({email}) => {
-    const {input, answerReason, storyDescription} = await StoryModel.findOne({email});
+const investigationContext = async ({ email }) => {
+  const { input, answerReason, storyDescription } = await StoryModel.findOne({
+    email,
+  });
 
-    return {prePrompt:`I am a detective, and you are a story teller who makes up situations, and who responds to questinos asked to you about people. the story context is 
+  return {
+    prePrompt: `I am a detective, and you are a story teller who makes up situations, and who responds to questinos asked to you about people. the story context is 
     ${input}, while this happened, the story plot happened is : ${storyDescription}"
     
-    `, answerReason}
-}
+    `,
+    answerReason,
+  };
+};
