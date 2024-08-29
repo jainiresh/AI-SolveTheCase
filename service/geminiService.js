@@ -69,9 +69,9 @@ export async function getInvestigationResults({ query, email }) {
     ${query}, is he/she the culprit ?
 
     In my investigation
-    If, SUSPECT and CULPRIT's name/roles are different or NOT SAME,  Then, give appropriate scenrios that they were doing according to my question, and make sure your response starts with the word "NOT_SUS", and store this scenarios, in RESPONSE.
+    If, SUSPECT and CULPRIT's name/roles are different or NOT SAME,  Then, give appropriate scenarios that they were doing according to my question, and make sure your response starts with the word "NOT_SUS", and store this scenarios, in RESPONSE.
     else 
-    If SUSPECT and CULPRIT's name/roles are SAME then make up situations that connect my investigation to the crime, and tell me he looks a lot suspicious, and make sure your response starts with the word "SUS$" and store these scenarios, in RESPONSE
+    If SUSPECT and CULPRIT's name/roles are SAME then make up situations that connects SUSPECT_INVESTIGATION to CULPRIT_REASON, and tell me he looks suspicious without directly telling me that he/she is the thief, and make sure your response starts with the word "SUS$" and store these scenarios, in RESPONSE
 
     Know that you are someone who just gives made up situations of people, accordingly to the context.
     Dont use words like "maybe", "might be", or it's synonyms, tell me strongly that this is what happened.
