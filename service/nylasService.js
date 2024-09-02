@@ -26,4 +26,6 @@ export async function sendEmailViaNylas({
     },
   });
 }
+
+
 export default nylas;

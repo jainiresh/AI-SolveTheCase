@@ -1,7 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { prePrompt, testDay, testReason } from '../constants/constants.js';
+import { prePrompt, testDay } from '../constants/constants.js';
 import StoryModel from '../models/StoryModel.js';
-// import { GEMINI_API_KEY } from '../constants/constants'
 
 const genAI = new GoogleGenerativeAI('AIzaSyDLHYtS6M8SbgbaGr52K6CPt1Vbm4xvffw');
 
@@ -161,3 +160,13 @@ const investigationContext = async ({ email }) => {
     answerReason,
   };
 };
+
+
+export const generateRandomStory = async () => {
+  let prePrompt = `Look at this day : 
+  ${testDay}, and similarly generate and give me a day, keep the word count approximately same, including at max 5 people names
+  Output only the day, and strictly keep it withing 999 characters`
+
+  const result = await model.generateContent(prePrompt);
+  return result.response.text();
+}

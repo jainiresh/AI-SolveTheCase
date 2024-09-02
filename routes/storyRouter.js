@@ -2,6 +2,7 @@ import express from 'express';
 import {
   generateNickNames,
   generateNickNamesWithReference,
+  generateRandomStory,
   generateStory,
   getInvestigationResults,
   submitAnswer,
@@ -251,5 +252,9 @@ storyRouter.post('/submit', async (req, res, next) => {
 storyRouter.post('/genImage', async (req, res, next) => {
   res.send(await generateImageServiceUrl(req.body.data));
 });
+
+storyRouter.get('/genStory', async (req, res, next) => {
+  res.send(await generateRandomStory());
+})
 
 export default storyRouter;
