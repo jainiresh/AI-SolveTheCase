@@ -13,7 +13,7 @@ app.use('/auth', authRouter);
 app.use('/story', storyRouter);
 app.use('/contacts', contactRouter);
 
-setInterval(pingUrl, 600000);
+// setInterval(`https://resultchecker-p59v.onrender.com/check`, 300000);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

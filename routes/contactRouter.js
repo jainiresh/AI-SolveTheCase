@@ -154,7 +154,7 @@ contactRouter.post('/invite', async (req, res, next) => {
       data: `Invited ${invitee.email} to the case, and shared the details !`,
     });
   } catch (error) {
-    console.log('Errored ' + JSON.stringify(error.message));
+    console.log(error);
     res.status(500).json({ error: error.message });
   }
 });

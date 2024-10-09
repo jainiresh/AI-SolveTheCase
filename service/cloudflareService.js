@@ -1,6 +1,11 @@
 import { uploadFile } from "@uploadcare/upload-client/node";
-import { CLOUDFLARE_API_KEY, CLOUDFLARE_IMAGE_MODEL, UPLOADCARE_PUBLIC_KEY } from "../constants/constants.js";
-import { response } from "express";
+import { CLOUDFLARE_API_KEY, CLOUDFLARE_IMAGE_MODEL, PINATA_GATEWAY_DOMAIN, PINATA_GATEWAY_PATH, PINATA_JWT_KEY, UPLOADCARE_PUBLIC_KEY } from "../constants/constants.js";
+import { PinataSDK } from "pinata-web3";
+
+const pinata = new PinataSDK({
+  pinataJwt: PINATA_JWT_KEY,
+  pinataGateway : PINATA_GATEWAY_DOMAIN
+})
 
 async function run(model, input) {
   try{
@@ -13,20 +18,27 @@ async function run(model, input) {
       }
     );
 
-    const imageBuffer = await response.arrayBuffer();
-    const buffer = Buffer.from(imageBuffer);
+    console.log(response)
 
-    const result = await uploadFile(buffer, {
-      publicKey : UPLOADCARE_PUBLIC_KEY,
-      store: 'auto'
+    const arrayBuffer = await response.arrayBuffer();
+
+    console.log(arrayBuffer)
+
+    const blob = new Blob([Buffer.from(arrayBuffer)])
+    let file = new File([blob], {
+        type : 'image/png'
     })
 
-    const base64Image = Buffer.from(imageBuffer).toString('base64');
+    console.log(file)
+
+    const upload = await pinata.upload.file(file)
+
+    const base64Image = Buffer.from(arrayBuffer).toString('base64');
     
-    return {cdnUrl : result.cdnUrl, base64Image };
+    return {cdnUrl : PINATA_GATEWAY_PATH + "/" + upload.IpfsHash, base64Image };
   }
   catch(err){
-    console.log("Errored " + JSON.stringify(err));
+    console.log(err);
   }
     
 }
@@ -40,5 +52,5 @@ export const generateImageServiceUrl = async (prompt) => {
 
   
   console.log("Cdn url " + cdnUrl);
-  return {cdnUrl : `${cdnUrl}-/preview/`, base64Image};
+  return {cdnUrl : `${cdnUrl}`, base64Image};
 };
