@@ -1,7 +1,7 @@
-*This is a submission for the [Nylas Challenge](https://dev.to/challenges/nylas): AI Expedition, and Galaxy Brain*
+*This is a submission for the [The Pinata Challenge ](https://dev.to/challenges/pinata)*
 
 ## What I Built and Why
-This is a full fledged crime investigation scenario simulation game, mocking a real life crime investigation, using AI and Nylas api's to give you a simulation of a real investigation scenario.
+This is a full fledged crime investigation scenario simulation game, mocking a real life crime investigation, using AI , Email apis and PINATA , managing file uploads and displays to give you a simulation of a real investigation scenario.
 
 Haven't each and everyone, dreamt about investigating and finding clues, leading to the ground breaking discovery of the villains/culprits, like the ones they show in the movies.
 
@@ -9,7 +9,7 @@ well, this one is a complete crime solver, leveraging AI to give yout the exact 
 
 
 ## Demo
-Live Deployed version : https://ai-solvethecase-client.onrender.com
+Live Deployed version : https://ai-solvethecase-clientside.onrender.com
 <!-- Share a brief video overview of the project with a screen share, two minutes max.-->
 
 ## Code
@@ -106,9 +106,10 @@ Close the final dialog box, to exit the case and start a new one.
 
 
 ## Feature overview
- - User can start with just their SSO email address with Nylas hosted authentication.
+ - User can start with just their SSO email address with well known third party hosted authentication.
  - User can input their own custom day's experience, or opt to choose an AI generated one.
  - Users receive awesome text images, in response to the investigations, and the story.
+ - Each of the gerenated image is been uploaded to pinata, and pinata powers and drives the file uploads and retrieval for the application.
  - Users can choose to view their friends, to invite to the game.
  - Invited friends, and Uninivited friends are segregated in the UI
  - Investigations performed, upto the point of inviting will be shared the invited friend.
@@ -117,21 +118,17 @@ Close the final dialog box, to exit the case and start a new one.
  - You can revisit the rules, story context, or the day input whenever you please.
  
 
-## Nylas and AI Role in the project
+## More details
 
-###NYLAS products
+###PINATA
 
-Nylas EMAIL API has been utilized to send email investigations, story contexts to the players.
-(https://github.com/jainiresh/AI-SolveTheCase/blob/master/service/nylasService.js)
-
-Nylas CONTACTS API has been utilized as a means to share the case with your contacts/friends.
-(https://github.com/jainiresh/AI-SolveTheCase/blob/master/routes/contactRouter.js)
-
-Nylas Hosted Authentication is used to authenticate users, fetch their grantIDS and email and other information about them.
+Pinata is used to store , upload and retrieve the AI generated images that are being sent via the email, as well as to the frontend for simulation.
 
 ###AI products
 - gemini-1.5-flash , for story and investigation text generation.
 - @cf/stabilityai/stable-diffusion-xl-base-1.0, for image generation.
+
+Third party products have been used for efficient email communication, and contacts retrieval.
 
 <!-- Team Submissions: Please pick one member to publish the submission and credit teammates by listing their DEV usernames directly in the body of the post. -->
 
