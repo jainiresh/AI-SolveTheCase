@@ -5,8 +5,8 @@ export const USER_DB_NAME = process.env.USER_DB_NAME || "nireshpandian19"
 export const DATABASE_NAME = process.env.DATABASE_NAME || "StoryBot"
 export const CONTACTS_COLLECTION_NAME = process.env.CONTACTS_COLLECTION_NAME || "UserContacts"
 
-//GEMINI SERVICE
-export const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyDLHYtS6M8SbgbaGr52K6CPt1Vbm4xvffw'
+//GROQ SERVICE
+export const GROQ_API_KEY = process.env.GROQ_API_KEY || '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'
 export const CLOUDFLARE_API_KEY = process.env.CLOUDFLARE_API_KEY || "W3v6ffHWxczZO9f1gQvyeKwcZSJsFNH_8drcDzZA"
 export const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || "90fc83070e95f461645dd2ed67ef202d"
 export const CLOUDFLARE_IMAGE_MODEL = process.env.CLOUDFLARE_IMAGE_MODEL || "@cf/stabilityai/stable-diffusion-xl-base-1.0"

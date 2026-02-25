@@ -6,7 +6,7 @@ import {
   generateStory,
   getInvestigationResults,
   submitAnswer,
-} from '../service/geminiService.js';
+} from '../service/groqService.js';
 import StoryModel from '../models/StoryModel.js';
 import config from '../config/nylasConfig.js';
 import { generateImageServiceUrl } from '../service/cloudflareService.js';

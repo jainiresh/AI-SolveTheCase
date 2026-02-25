@@ -15,7 +15,7 @@ app.use('/contacts', contactRouter);
 
 // setInterval(`https://resultchecker-p59v.onrender.com/check`, 300000);
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8000;
 app.listen(port, () => {
   console.log('Server listening on ' + port);
 });
